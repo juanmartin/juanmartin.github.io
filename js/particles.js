@@ -128,7 +128,7 @@ function render() {
 
     group.rotation.x += 0.0001;
     group.rotation.y += 0.0002;
-    
+
     renderer.render( scene, camera );
 }
 
