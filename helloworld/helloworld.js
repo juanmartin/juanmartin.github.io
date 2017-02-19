@@ -1,4 +1,4 @@
-var textMesh, textGeo, helper;
+var textMesh, helper;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -19,11 +19,12 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.zoomSpeed = 5.0;
 controls.enablePan = false;
 
+
 const loader = new THREE.FontLoader();
 loader.load('../fonts/Comic_Sans_MS_Regular.json', onFontLoaded);
 
 function onFontLoaded (font) {
-    textGeo = new THREE.TextGeometry('AABB = :(', {
+    const textGeo = new THREE.TextGeometry('AABB = :(', {
         font: font,
         size: 9.0,
         height: 0.5
