@@ -10,6 +10,7 @@ const ancho = 10;
 const tracking = 100; // letter spacing
 
 const cantLetras = 500;
+const PI2 = Math.PI * 2;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -26,6 +27,19 @@ document.getElementById('form').addEventListener('submit', function (e) {
     e.preventDefault();
     document.getElementById('input').style.display = 'none'; //desaparecer
     document.getElementById('enterButton').style.display = 'none'; //el form al entrar un mensaje
+
+    // Randomize existing positions
+    scene.traverse(function (node) {
+        if (node instanceof THREE.Mesh) {
+            node.position.x = Math.random() * 2000 - 1000;
+            node.position.y = Math.random() * 2000 - 1000;
+            node.position.z = Math.random() * 2000 - 1000;
+            node.rotation.x = Math.random() * PI2;
+            node.rotation.y = Math.random() * PI2;
+            node.rotation.z = Math.random() * PI2;
+        }
+    });
+
     const message = document.getElementById('input').value; //captura el msj
     const rand = () => Math.random() * 2 - 1; //random de -1 a 1
     const randVector = () => new THREE.Vector3(rand(), rand(), rand());
@@ -37,7 +51,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
 
 
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
-    
+
     //HIDDEN MESSAGE
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
@@ -81,7 +95,6 @@ function init() {
 
     scene = new THREE.Scene();
 
-    var PI2 = Math.PI * 2;
     var program = function (context) {
 
         context.beginPath();
@@ -107,7 +120,7 @@ function init() {
     controls.addEventListener('change', render);
 
     window.addEventListener('resize', onWindowResize, false);
-    
+
     //LETTER GALAXY
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
