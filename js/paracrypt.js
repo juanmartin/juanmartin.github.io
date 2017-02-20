@@ -1,6 +1,15 @@
 var container;
 const loader = new THREE.FontLoader();
 var camera, scene, renderer, group, textMesh, controls;
+var mouseX = 0,
+    mouseY = 0;
+var cameraMoves = {
+    x: 0,
+    y: 0,
+    z: -0.1,
+    move: false,
+    speed: 0.2
+};
 const fontName = '../fonts/Courier New_Regular.json';
 
 //char properties
@@ -9,7 +18,7 @@ const minSize = 20;
 const ancho = 10;
 const tracking = 100; // letter spacing
 
-const cantLetras = 500;
+const cantLetras = 300;
 const PI2 = Math.PI * 2;
 
 var windowHalfX = window.innerWidth / 2;
@@ -62,7 +71,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-//                size: Math.random() * maxSize + minSize,
+                //size: Math.random() * maxSize + minSize,
                 size: 30,
                 height: ancho
             });
@@ -89,8 +98,8 @@ function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-//    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
-    camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
+    //    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+    camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
     camera.position.z = 1000;
 
     scene = new THREE.Scene();
@@ -116,7 +125,7 @@ function init() {
     controls = new THREE.TrackballControls(camera, renderer.domElement);
     controls.noPan = false;
     controls.minDistance = 0;
-    controls.maxDistance = Infinity;
+    controls.maxDistance = 2000;
     controls.addEventListener('change', render);
 
     window.addEventListener('resize', onWindowResize, false);
@@ -160,6 +169,17 @@ function onWindowResize() {
 
 }
 
+function mouseMove(e) {
+
+    camera.position.x += Math.max(Math.min((e.clientX - mouseX) * 0.01, cameraMoves.speed), -cameraMoves.speed);
+    camera.position.y += Math.max(Math.min((mouseY - e.clientY) * 0.01, cameraMoves.speed), -cameraMoves.speed);
+
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+}
+window.addEventListener('mousemove', mouseMove);
+
 function animate() {
 
     requestAnimationFrame(animate);
@@ -174,12 +194,12 @@ function animate() {
 
 function render() {
 
-    // camera.position.x += ( mouseX - camera.position.x ) * 0.0005;
-    // camera.position.y += ( - mouseY - camera.position.y ) * 0.0005;
+    //camera.position.x += (mouseX - camera.position.x) * 0.0005;
+    //camera.position.y += (-mouseY - camera.position.y) * 0.0005;
     //camera.lookAt(scene.position);
 
-    // group.rotation.x += 0.0001;
-    // group.rotation.y += 0.0002;
+    group.rotation.x += mouseX * 0.0000001;
+    group.rotation.y += -mouseY * 0.0000002;
 
     renderer.render(scene, camera);
 }
