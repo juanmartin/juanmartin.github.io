@@ -12,23 +12,23 @@ init();
 animate();
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('input').focus();           //focus al form para escribir ni bien carga
+    document.getElementById('input').focus(); //focus al form para escribir ni bien carga
 });
 document.getElementById('form').addEventListener('submit', function (e) {
     e.preventDefault();
-    document.getElementById('input').style.display = 'none';            //desaparecer
-    document.getElementById('enterButton').style.display = 'none';      //el form al entrar un mensaje
-    const message = document.getElementById('input').value;                //captura el msj
-    const rand = () => Math.random() * 2 - 1;   //random de -1 a 1
+    document.getElementById('input').style.display = 'none'; //desaparecer
+    document.getElementById('enterButton').style.display = 'none'; //el form al entrar un mensaje
+    const message = document.getElementById('input').value; //captura el msj
+    const rand = () => Math.random() * 2 - 1; //random de -1 a 1
     const randVector = () => new THREE.Vector3(rand(), rand(), rand());
     //para construir la matriz de rotacion
     const eye = randVector();
-    //    const center = new THREE.Vector3();
+    //const center = new THREE.Vector3();
     const center = randVector();
     const up = randVector();
 
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
-
+        
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
             const material = new THREE.MeshBasicMaterial({
@@ -41,27 +41,16 @@ document.getElementById('form').addEventListener('submit', function (e) {
                 height: 6
             });
             const textMesh = new THREE.Mesh(textGeo, material);
-            const lineVector = new THREE.Vector3(i * 50, 0, 0);     //linea de escritura en x
+            const lineVector = new THREE.Vector3(i * 50, 0, 0); //linea de escritura en x
             const positionVector = lineVector.applyMatrix4(rotationMatrix); //torcer linea de escritura segun la matriz
-//            var quaternion = new THREE.Quaternion().setFromUnitVectors(lineVector,positionVector);
-//            var matrix = new THREE.Matrix4().makeRotationFromQuaternion(quaternion);
-//            textMesh.applyMatrix(matrix);
-            
-            textMesh.position.x = lineVector.x;
-            textMesh.position.y = lineVector.y;
-            textMesh.position.z = lineVector.z;
-            //const rotationVectorM = new THREE.Matrix4().makeRotationAxis(positionVector.normalize(),Math.PI/2);
-            //const rotationVector = positionVector.applyMatrix4(rotationVectorM);
-            //textMesh.rotateOnAxis(rotationVector,Math.PI/2);
 
-            //const axis = new THREE.Vector3();
-            //axis.crossVectors(lineVector.normalize(),positionVector.normalize());
-            //const angle = lineVector.normalize().angleTo(positionVector.normalize()); 
-            //rotationMatrix.makeRotationAxis(axis, angle); 
-            //textMesh.applyMatrix(rotationMatrix);
-            //textMesh.rotation.x = Math.PI/2;
-            //textMesh.rotation.x = rotationVector.y;
-            //textMesh.rotation.x = rotationVector.z;
+            //POSICION
+            textMesh.position.x = positionVector.x;
+            textMesh.position.y = positionVector.y;
+            textMesh.position.z = positionVector.z;
+            //ROTACION
+            const axis = new THREE.Vector3(1, 0, 0); //eje de la letra
+            textMesh.quaternion.setFromUnitVectors(axis, positionVector.clone().normalize());
 
 
 
@@ -72,36 +61,38 @@ document.getElementById('form').addEventListener('submit', function (e) {
 
 function init() {
 
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
     camera.position.z = 1000;
 
     scene = new THREE.Scene();
 
     var PI2 = Math.PI * 2;
-    var program = function ( context ) {
+    var program = function (context) {
 
         context.beginPath();
-        context.arc( 0, 0, 0.5, 0, PI2, true );
+        context.arc(0, 0, 0.5, 0, PI2, true);
         context.fill();
 
     };
 
     group = new THREE.Group();
-    scene.add( group );
+    scene.add(group);
 
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    container.appendChild( renderer.domElement );
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.zoomSpeed = 5.0;
     controls.enablePan = false;
     controls.maxDistance = 1500;
 
-    window.addEventListener( 'resize', onWindowResize, false );
+    window.addEventListener('resize', onWindowResize, false);
 
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -137,13 +128,13 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
 function animate() {
 
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
 
     render();
 }
@@ -152,12 +143,10 @@ function render() {
 
     // camera.position.x += ( mouseX - camera.position.x ) * 0.0005;
     // camera.position.y += ( - mouseY - camera.position.y ) * 0.0005;
-    camera.lookAt( scene.position );
+    camera.lookAt(scene.position);
 
     // group.rotation.x += 0.0001;
     // group.rotation.y += 0.0002;
 
-    renderer.render( scene, camera );
+    renderer.render(scene, camera);
 }
-
-
