@@ -1,6 +1,6 @@
 var container;
 const loader = new THREE.FontLoader();
-var camera, scene, renderer, group, textMesh;
+var camera, scene, renderer, group, textMesh, controls;
 const fontName = '../fonts/Courier New_Regular.json';
 
 var windowHalfX = window.innerWidth / 2;
@@ -28,7 +28,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
     const up = randVector();
 
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
-        
+
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
             const material = new THREE.MeshBasicMaterial({
@@ -87,10 +87,11 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.zoomSpeed = 5.0;
-    controls.enablePan = false;
+    //CONTROLES DE CAMARA
+    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    controls.noPan = true;
     controls.maxDistance = 1500;
+    controls.addEventListener('change', render);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -135,6 +136,11 @@ function onWindowResize() {
 function animate() {
 
     requestAnimationFrame(animate);
+    
+    //update de camara controls
+    var clock = new THREE.Clock();
+    var delta = clock.getDelta();
+    controls.update(delta);
 
     render();
 }
