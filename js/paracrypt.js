@@ -9,7 +9,7 @@ const minSize = 20;
 const ancho = 10;
 const tracking = 100; // letter spacing
 
-const cantLetras = 0;
+const cantLetras = 500;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -37,7 +37,8 @@ document.getElementById('form').addEventListener('submit', function (e) {
 
 
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
-
+    
+    //HIDDEN MESSAGE
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
             const depthDistance = Math.random() * 500;
@@ -47,7 +48,8 @@ document.getElementById('form').addEventListener('submit', function (e) {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-                size: Math.random() * maxSize + minSize,
+//                size: Math.random() * maxSize + minSize,
+                size: 30,
                 height: ancho
             });
             const textMesh = new THREE.Mesh(textGeo, material);
@@ -59,7 +61,6 @@ document.getElementById('form').addEventListener('submit', function (e) {
             textMesh.position.y = positionVector.y;
             textMesh.position.z = positionVector.z;
             //ROTACION
-            const axis = new THREE.Vector3(1, 0, 0); //eje de la letra
             textMesh.quaternion.setFromRotationMatrix(rotationMatrix);
 
 
@@ -74,7 +75,8 @@ function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+//    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+    camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
     camera.position.z = 1000;
 
     scene = new THREE.Scene();
@@ -99,12 +101,14 @@ function init() {
 
     //CONTROLES DE CAMARA
     controls = new THREE.TrackballControls(camera, renderer.domElement);
-    controls.noPan = true;
-    controls.maxDistance = 1500;
+    controls.noPan = false;
+    controls.minDistance = 0;
+    controls.maxDistance = Infinity;
     controls.addEventListener('change', render);
 
     window.addEventListener('resize', onWindowResize, false);
-
+    
+    //LETTER GALAXY
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         for (var i = 0; i < cantLetras; i++) {
@@ -159,7 +163,7 @@ function render() {
 
     // camera.position.x += ( mouseX - camera.position.x ) * 0.0005;
     // camera.position.y += ( - mouseY - camera.position.y ) * 0.0005;
-    camera.lookAt(scene.position);
+    //camera.lookAt(scene.position);
 
     // group.rotation.x += 0.0001;
     // group.rotation.y += 0.0002;
