@@ -31,6 +31,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
 
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
+            const depthDistance = Math.random() * 500;
             const material = new THREE.MeshBasicMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
                 side: THREE.DoubleSide
@@ -41,7 +42,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
                 height: 6
             });
             const textMesh = new THREE.Mesh(textGeo, material);
-            const lineVector = new THREE.Vector3(i * 50, 0, 0); //linea de escritura en x
+            const lineVector = new THREE.Vector3(i * 50 + 1, 0, depthDistance); //linea de escritura en x
             const positionVector = lineVector.applyMatrix4(rotationMatrix); //torcer linea de escritura segun la matriz
 
             //POSICION
@@ -50,7 +51,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
             textMesh.position.z = positionVector.z;
             //ROTACION
             const axis = new THREE.Vector3(1, 0, 0); //eje de la letra
-            textMesh.quaternion.setFromUnitVectors(axis, positionVector.clone().normalize());
+            textMesh.quaternion.setFromRotationMatrix(rotationMatrix);
 
 
 
@@ -97,7 +98,7 @@ function init() {
 
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 0; i++) {
             const char = charset.charAt(Math.floor(Math.random() * charset.length));
             const material = new THREE.MeshBasicMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
@@ -136,7 +137,7 @@ function onWindowResize() {
 function animate() {
 
     requestAnimationFrame(animate);
-    
+
     //update de camara controls
     var clock = new THREE.Clock();
     var delta = clock.getDelta();
