@@ -3,6 +3,14 @@ const loader = new THREE.FontLoader();
 var camera, scene, renderer, group, textMesh, controls;
 const fontName = '../fonts/Courier New_Regular.json';
 
+//char properties
+const maxSize = 80;
+const minSize = 20;
+const ancho = 10;
+const tracking = 100; // letter spacing
+
+const cantLetras = 0;
+
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
@@ -27,6 +35,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
     const center = randVector();
     const up = randVector();
 
+
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
 
     loader.load(fontName, function (font) {
@@ -38,11 +47,11 @@ document.getElementById('form').addEventListener('submit', function (e) {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-                size: 30,
-                height: 6
+                size: Math.random() * maxSize + minSize,
+                height: ancho
             });
             const textMesh = new THREE.Mesh(textGeo, material);
-            const lineVector = new THREE.Vector3(i * 50 + 1, 0, depthDistance); //linea de escritura en x
+            const lineVector = new THREE.Vector3(i * tracking + 1, 0, depthDistance); //linea de escritura en x --  *letter spacing
             const positionVector = lineVector.applyMatrix4(rotationMatrix); //torcer linea de escritura segun la matriz
 
             //POSICION
@@ -98,7 +107,7 @@ function init() {
 
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        for (var i = 0; i < 0; i++) {
+        for (var i = 0; i < cantLetras; i++) {
             const char = charset.charAt(Math.floor(Math.random() * charset.length));
             const material = new THREE.MeshBasicMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
@@ -106,8 +115,8 @@ function init() {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-                size: Math.random() * 80 + 40,
-                height: 10
+                size: Math.random() * maxSize + minSize,
+                height: ancho
             });
             const textMesh = new THREE.Mesh(textGeo, material);
             textMesh.position.x = Math.random() * 2000 - 1000;
