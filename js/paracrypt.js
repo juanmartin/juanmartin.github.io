@@ -1,4 +1,5 @@
 var container;
+//var loadingManager = new THREE.LoadingManager();
 const loader = new THREE.FontLoader();
 var camera, scene, renderer, group, textMesh, controls;
 var mouseX = 0,
@@ -18,13 +19,26 @@ const minSize = 20;
 const ancho = 10;
 const tracking = 100; // letter spacing
 
-const cantLetras = 300;
+const msgSize = Math.random() * maxSize + minSize;
+
+const cantLetras = 500;
 const PI2 = Math.PI * 2;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 THREE.Cache.enabled = true;
+
+//loadingManager.onProgress = function (item, loaded, total) {
+//    console.log(item, loaded, total);
+//};
+//loadingManager.onLoad = function () {
+//    console.log('all items loaded');
+//};
+//loadingManager.onError = function () {
+//    console.log('there has been an error');
+//};
+
 
 init();
 animate();
@@ -71,8 +85,7 @@ document.getElementById('form').addEventListener('submit', function (e) {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-                //size: Math.random() * maxSize + minSize,
-                size: 30,
+                size: msgSize,
                 height: ancho
             });
             const textMesh = new THREE.Mesh(textGeo, material);
@@ -98,19 +111,11 @@ function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    //    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
-    camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+    //    camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
     camera.position.z = 1000;
 
     scene = new THREE.Scene();
-
-    var program = function (context) {
-
-        context.beginPath();
-        context.arc(0, 0, 0.5, 0, PI2, true);
-        context.fill();
-
-    };
 
     group = new THREE.Group();
     scene.add(group);
