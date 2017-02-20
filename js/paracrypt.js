@@ -12,24 +12,27 @@ init();
 animate();
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('input').focus();
+    document.getElementById('input').focus();           //focus al form para escribir ni bien carga
 });
 document.getElementById('form').addEventListener('submit', function (e) {
     e.preventDefault();
-    document.getElementById('input').style.display = 'none';
-    document.getElementById('enterButton').style.display = 'none';
-    const message = document.getElementById('input').value;
-    const rand = () => Math.random() * 2 - 1;
+    document.getElementById('input').style.display = 'none';            //desaparecer
+    document.getElementById('enterButton').style.display = 'none';      //el form al entrar un mensaje
+    const message = document.getElementById('input').value;                //captura el msj
+    const rand = () => Math.random() * 2 - 1;   //random de -1 a 1
     const randVector = () => new THREE.Vector3(rand(), rand(), rand());
+    //para construir la matriz de rotacion
     const eye = randVector();
-    const center = new THREE.Vector3();
+    //    const center = new THREE.Vector3();
+    const center = randVector();
     const up = randVector();
+
     const rotationMatrix = new THREE.Matrix4().lookAt(eye, center, up);
 
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
             const material = new THREE.MeshBasicMaterial({
-                color: 0xffffff,
+                color: Math.random() * 0x808008 + 0x808080,
                 side: THREE.DoubleSide
             });
             const textGeo = new THREE.TextGeometry(char, {
@@ -38,16 +41,30 @@ document.getElementById('form').addEventListener('submit', function (e) {
                 height: 6
             });
             const textMesh = new THREE.Mesh(textGeo, material);
-            const lineVector = new THREE.Vector3(i * 50, 0, 0);
-            const positionVector = lineVector.applyMatrix4(rotationMatrix);
-            textMesh.position.x = positionVector.x;
-            textMesh.position.y = positionVector.y;
-            textMesh.position.z = positionVector.z;
-            // textMesh.position.y = Math.random() * 2000 - 1000;
-            // textMesh.position.z = Math.random() * 2000 - 1000;
-            // textMesh.rotation.x = Math.random() * PI2;
-            // textMesh.rotation.y = Math.random() * PI2;
-            // textMesh.rotation.z = Math.random() * PI2;
+            const lineVector = new THREE.Vector3(i * 50, 0, 0);     //linea de escritura en x
+            const positionVector = lineVector.applyMatrix4(rotationMatrix); //torcer linea de escritura segun la matriz
+//            var quaternion = new THREE.Quaternion().setFromUnitVectors(lineVector,positionVector);
+//            var matrix = new THREE.Matrix4().makeRotationFromQuaternion(quaternion);
+//            textMesh.applyMatrix(matrix);
+            
+            textMesh.position.x = lineVector.x;
+            textMesh.position.y = lineVector.y;
+            textMesh.position.z = lineVector.z;
+            //const rotationVectorM = new THREE.Matrix4().makeRotationAxis(positionVector.normalize(),Math.PI/2);
+            //const rotationVector = positionVector.applyMatrix4(rotationVectorM);
+            //textMesh.rotateOnAxis(rotationVector,Math.PI/2);
+
+            //const axis = new THREE.Vector3();
+            //axis.crossVectors(lineVector.normalize(),positionVector.normalize());
+            //const angle = lineVector.normalize().angleTo(positionVector.normalize()); 
+            //rotationMatrix.makeRotationAxis(axis, angle); 
+            //textMesh.applyMatrix(rotationMatrix);
+            //textMesh.rotation.x = Math.PI/2;
+            //textMesh.rotation.x = rotationVector.y;
+            //textMesh.rotation.x = rotationVector.z;
+
+
+
             group.add(textMesh);
         });
     });
@@ -75,7 +92,7 @@ function init() {
     group = new THREE.Group();
     scene.add( group );
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.appendChild( renderer.domElement );
 
@@ -88,7 +105,7 @@ function init() {
 
     loader.load(fontName, function (font) {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        for (var i = 0; i < 0; i++) {
+        for (var i = 0; i < 100; i++) {
             const char = charset.charAt(Math.floor(Math.random() * charset.length));
             const material = new THREE.MeshBasicMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
@@ -96,8 +113,8 @@ function init() {
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
-                size: Math.random() * 50 + 20,
-                height: 6
+                size: Math.random() * 80 + 40,
+                height: 10
             });
             const textMesh = new THREE.Mesh(textGeo, material);
             textMesh.position.x = Math.random() * 2000 - 1000;
