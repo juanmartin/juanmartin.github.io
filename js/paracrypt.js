@@ -79,9 +79,10 @@ document.getElementById('form').addEventListener('submit', function (e) {
     loader.load(fontName, function (font) {
         message.split('').forEach(function (char, i) {
             const depthDistance = Math.random() * 500;
-            const material = new THREE.MeshBasicMaterial({
+            const material = new THREE.MeshPhongMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                shininess: 100
             });
             const textGeo = new THREE.TextGeometry(char, {
                 font: font,
@@ -124,7 +125,24 @@ function init() {
         antialias: true
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.BasicShadowMap;
+
     container.appendChild(renderer.domElement);
+
+    var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    var dirLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    dirLight.position.set( 0, 0, 0 ).normalize();
+    scene.add( dirLight );
+
+    var pointLight = new THREE.PointLight( 0xffffff, 1.2 );
+    pointLight.position.set( 500, 500, 500 );
+    pointLight.castShadow = true;
+    pointLight.shadow.camera.near = 0.1;
+    pointLight.shadow.camera.far = 25;
+    scene.add( pointLight );
 
     //CONTROLES DE CAMARA
     controls = new THREE.TrackballControls(camera, renderer.domElement);
@@ -140,7 +158,8 @@ function init() {
         const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         for (var i = 0; i < cantLetras; i++) {
             const char = charset.charAt(Math.floor(Math.random() * charset.length));
-            const material = new THREE.MeshBasicMaterial({
+            // const material = new THREE.MeshBasicMaterial({
+            const material = new THREE.MeshPhongMaterial({
                 color: Math.random() * 0x808008 + 0x808080,
                 side: THREE.DoubleSide
             });
